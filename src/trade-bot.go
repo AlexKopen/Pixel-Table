@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func processStreamData(streamData []StreamEmission, symbol string) {
+func processStreamData(streamData []StreamEmission, symbol string, c chan float64) {
 	// Create the initial trading bot state
 	tradingBotState := BotState{
 		Active:                false,
@@ -23,7 +23,7 @@ func processStreamData(streamData []StreamEmission, symbol string) {
 		actionDetermination(streamEmission, &tradingBotState, symbol)
 	}
 
-	log.Println(tradingBotState.Profit)
+	c <- tradingBotState.Profit
 }
 
 func actionDetermination(streamEmission StreamEmission, tradingBotState *BotState, symbol string) {
@@ -60,18 +60,18 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 
 		// Sell if the price has fallen too far below the purchase point
 		if priceFallLossTriggered {
-			log.Printf("sell loss - %s\n", timeFormatted(streamEmission.CloseTime))
+			//log.Printf("sell loss - %s\n", timeFormatted(streamEmission.CloseTime))
 			action = Sell
 		} else if priceHasRisenEnough && priceFallGainTriggered {
 			//	Sell if the price has risen enough from the purchase price and also fallen too far below the maximum price
-			log.Printf("sell profit - %s\n", timeFormatted(streamEmission.CloseTime))
+			//log.Printf("sell profit - %s\n", timeFormatted(streamEmission.CloseTime))
 			action = Sell
 		}
 	case false:
 		// PURCHASE LOGIC
 		// Purchase if the percent change has passed the defined threshold
 		if percentChange >= botParameters.ChangeThresholdPercentage {
-			log.Printf("purchase - %s\n", timeFormatted(streamEmission.CloseTime))
+			//log.Printf("purchase - %s\n", timeFormatted(streamEmission.CloseTime))
 			action = Purchase
 		}
 	}

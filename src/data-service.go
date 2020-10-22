@@ -8,8 +8,9 @@ import (
 	"net/http"
 )
 
-func fetchCoinData(symbol string) []StreamEmission {
-	url := fmt.Sprintf("https://api.binance.com/api/v3/klines?startTime=1603042578682&interval=3m&symbol=%sUSDT&limit=1000", symbol)
+func generateStreamEmissions(symbol string, c chan []StreamEmission) {
+	// Fetch coin data from the Binance API
+	url := fmt.Sprintf("https://api.binance.com/api/v3/klines?interval=3m&symbol=%sUSDT&limit=1000", symbol)
 	resp, apiErr := http.Get(url)
 	if apiErr != nil {
 		log.Println("API error: ", apiErr)
@@ -17,13 +18,16 @@ func fetchCoinData(symbol string) []StreamEmission {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
+	// Unmarshal the data using a custom interface
 	var emissionRef StreamEmission
 	streamEmissions := []interface{}{emissionRef.OpenTime, emissionRef.Open, emissionRef.High, emissionRef.Low, emissionRef.Close, emissionRef.Volume, emissionRef.CloseTime, emissionRef.QuoteAssetVolume, emissionRef.NumberOfTrades, emissionRef.TakerBuyBaseAssetVolume, emissionRef.TakerBuyQuoteAssetVolume, emissionRef.Ignore}
-	var streamEmissionsConverted = []StreamEmission{}
 
 	if unmarshalErr := json.Unmarshal(body, &streamEmissions); unmarshalErr != nil {
 		log.Println("Unmarshal error: ", unmarshalErr)
 	}
+
+	// Iterate through the stream emissions with a custom interface and map over to a usable struct
+	var streamEmissionsConverted []StreamEmission
 
 	for _, record := range streamEmissions {
 		if rec, ok := record.([]interface{}); ok {
@@ -64,5 +68,5 @@ func fetchCoinData(symbol string) []StreamEmission {
 		}
 	}
 
-	return streamEmissionsConverted
+	c <- streamEmissionsConverted
 }
