@@ -1,7 +1,6 @@
 package main
 
 type StreamEmission struct {
-	Symbol                   string
 	OpenTime                 uint
 	Open                     string
 	High                     string

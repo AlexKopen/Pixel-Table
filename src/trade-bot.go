@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func processStreamData(streamData []StreamEmission) {
+func processStreamData(streamData []StreamEmission, symbol string) {
 	// Create the initial trading bot state
 	tradingBotState := BotState{
 		Active:                false,
@@ -18,16 +18,16 @@ func processStreamData(streamData []StreamEmission) {
 	// Iterate through the stream data and determine whether to
 	// consider selling or purchasing
 	for _, streamEmission := range streamData {
-		actionDetermination(streamEmission, &tradingBotState)
+		actionDetermination(streamEmission, &tradingBotState, symbol)
 	}
 
 }
 
-func actionDetermination(streamEmission StreamEmission, tradingBotState *BotState) {
+func actionDetermination(streamEmission StreamEmission, tradingBotState *BotState, symbol string) {
 	// Set default action and order values
 	action := Wait
 	marketOrder := MarketOrder{
-		Symbol: streamEmission.Symbol,
+		Symbol: symbol,
 		Time:   streamEmission.CloseTime,
 	}
 
