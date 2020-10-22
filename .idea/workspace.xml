@@ -99,10 +99,10 @@
     <option name="version" value="3" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="456" y="330" width="802" height="705" key="#Plugins" timestamp="1603090389625">
+    <state x="455" y="308" width="802" height="705" key="#Plugins" timestamp="1603327092221">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state x="456" y="330" width="802" height="705" key="#Plugins/0.0.3440.1440@0.0.3440.1440" timestamp="1603090389625" />
+    <state x="455" y="308" width="802" height="705" key="#Plugins/0.0.3440.1440@0.0.3440.1440" timestamp="1603327092221" />
     <state x="316" y="278" width="1084" height="786" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603150858161">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -159,9 +159,9 @@
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="576" y="325" width="907" height="693" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.3440.1440@0.0.3440.1440" timestamp="1603324294227" />
-    <state x="525" y="329" width="672" height="678" key="search.everywhere.popup" timestamp="1603323927280">
+    <state x="525" y="329" width="672" height="678" key="search.everywhere.popup" timestamp="1603327074913">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state x="525" y="329" width="672" height="678" key="search.everywhere.popup/0.0.3440.1440@0.0.3440.1440" timestamp="1603323927280" />
+    <state x="525" y="329" width="672" height="678" key="search.everywhere.popup/0.0.3440.1440@0.0.3440.1440" timestamp="1603327074913" />
   </component>
 </project>
