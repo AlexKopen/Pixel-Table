@@ -27,10 +27,10 @@ var Symbols = [...]string{
 	//"BNB",
 	//"EOS",
 	//"ADA",
-	//"BTC",
+	"BTC",
 	//"TRX",
 	//"XRP",
 	//"XTZ",
-	"UNI",
+	//"UNI",
 	//"LTC",
 }

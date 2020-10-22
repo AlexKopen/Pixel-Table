@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"math"
 	"strconv"
 	"time"
@@ -23,7 +23,7 @@ func processStreamData(streamData []StreamEmission, symbol string) {
 		actionDetermination(streamEmission, &tradingBotState, symbol)
 	}
 
-	fmt.Println(tradingBotState.Profit)
+	log.Println(tradingBotState.Profit)
 }
 
 func actionDetermination(streamEmission StreamEmission, tradingBotState *BotState, symbol string) {
@@ -60,18 +60,18 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 
 		// Sell if the price has fallen too far below the purchase point
 		if priceFallLossTriggered {
-			fmt.Printf("sell loss - %s\n", timeFormatted(streamEmission.CloseTime))
+			log.Printf("sell loss - %s\n", timeFormatted(streamEmission.CloseTime))
 			action = Sell
 		} else if priceHasRisenEnough && priceFallGainTriggered {
 			//	Sell if the price has risen enough from the purchase price and also fallen too far below the maximum price
-			fmt.Printf("sell profit - %s\n", timeFormatted(streamEmission.CloseTime))
+			log.Printf("sell profit - %s\n", timeFormatted(streamEmission.CloseTime))
 			action = Sell
 		}
 	case false:
 		// PURCHASE LOGIC
 		// Purchase if the percent change has passed the defined threshold
 		if percentChange >= botParameters.ChangeThresholdPercentage {
-			fmt.Printf("purchase - %s\n", timeFormatted(streamEmission.CloseTime))
+			log.Printf("purchase - %s\n", timeFormatted(streamEmission.CloseTime))
 			action = Purchase
 		}
 	}
@@ -99,7 +99,7 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 		marketOrder.Price = closePrice
 		tradingBotState.MarketOrders = append(tradingBotState.MarketOrders, marketOrder)
 	} else if UseTestData {
-		fmt.Println("wait")
+		log.Println("wait")
 	}
 }
 
