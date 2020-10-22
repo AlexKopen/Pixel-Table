@@ -12,14 +12,12 @@ func main() {
 	//	Read stream data for each symbol
 	for _, symbol := range Symbols {
 		// Dynamically create a file path
-		filePath := fmt.Sprintf("historical-data/%s-large.json", strings.ToLower(symbol))
+		filePath := fmt.Sprintf("historical-data/%s.json", strings.ToLower(symbol))
 		// Read historical stream data
 		historicalData, err := ioutil.ReadFile(filePath)
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		//fmt.Println(string(historicalData))
 
 		// Covert data read from file to StreamEmission struct
 		var streamEmissions []StreamEmission

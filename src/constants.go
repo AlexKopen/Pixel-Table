@@ -2,8 +2,8 @@ package main
 
 var BotParameters = Parameters{
 	ChangeThresholdPercentage: 0.003,
-	LossSellPercentage:        0.002,
-	GainSellPercentage:        0.002,
+	LossSellPercentage:        0.025,
+	GainSellPercentage:        0.005,
 }
 
 const (

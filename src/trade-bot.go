@@ -21,6 +21,15 @@ func processStreamData(streamData []StreamEmission, symbol string) {
 		actionDetermination(streamEmission, &tradingBotState, symbol)
 	}
 
+	//	Calculate profit
+	profit := 0.0
+	for index, marketOrder := range tradingBotState.MarketOrders {
+		if index != 0 && index%2 == 0 {
+		profit += marketOrder.Price - tradingBotState.MarketOrders[index - 1].Price
+		}
+	}
+	fmt.Println(profit)
+
 }
 
 func actionDetermination(streamEmission StreamEmission, tradingBotState *BotState, symbol string) {
