@@ -33,6 +33,13 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 		Symbol: symbol,
 		Time:   streamEmission.CloseTime,
 	}
+	// Test data parameters detection
+	botParameters := BotParameters
+	if UseTestData {
+		botParameters = BotParametersTest
+	} else {
+		botParameters = BotParameters
+	}
 
 	// Convert the open and close price to floats
 	openPrice, _ := strconv.ParseFloat(streamEmission.Open, 32)
@@ -47,9 +54,9 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 		// SELL LOGIC
 		// Update trading bot state values
 		tradingBotState.MaxPriceSincePurchase = math.Max(tradingBotState.MaxPriceSincePurchase, closePrice)
-		priceFallLossTriggered := closePrice <= (tradingBotState.PurchasePrice - (tradingBotState.PurchasePrice * BotParameters.LossSellPercentage))
-		priceHasRisenEnough := closePrice >= (tradingBotState.PurchasePrice + (tradingBotState.PurchasePrice * BotParameters.GainSellPercentage))
-		priceFallGainTriggered := closePrice <= tradingBotState.MaxPriceSincePurchase-(tradingBotState.MaxPriceSincePurchase*BotParameters.GainSellPercentage)
+		priceFallLossTriggered := closePrice <= (tradingBotState.PurchasePrice - (tradingBotState.PurchasePrice * botParameters.LossSellPercentage))
+		priceHasRisenEnough := closePrice >= (tradingBotState.PurchasePrice + (tradingBotState.PurchasePrice * botParameters.GainSellPercentage))
+		priceFallGainTriggered := closePrice <= tradingBotState.MaxPriceSincePurchase-(tradingBotState.MaxPriceSincePurchase*botParameters.GainSellPercentage)
 
 		// Sell if the price has fallen too far below the purchase point
 		if priceFallLossTriggered {
@@ -63,7 +70,7 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 	case false:
 		// PURCHASE LOGIC
 		// Purchase if the percent change has passed the defined threshold
-		if percentChange >= BotParameters.ChangeThresholdPercentage {
+		if percentChange >= botParameters.ChangeThresholdPercentage {
 			fmt.Printf("purchase - %s\n", timeFormatted(streamEmission.CloseTime))
 			action = Purchase
 		}
@@ -72,7 +79,7 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 	// Create a market order if a purchase or sell action is set
 	switch action {
 	case Purchase:
-		marketOrder.Action = Purchase
+		marketOrder.Action = action
 
 		// Set trading bot state values for sell processing
 		tradingBotState.PurchasePrice = closePrice
@@ -80,7 +87,7 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 		tradingBotState.Active = true
 		tradingBotState.Profit = tradingBotState.Profit - closePrice
 	case Sell:
-		marketOrder.Action = Sell
+		marketOrder.Action = action
 
 		// Set trading bot state values for future purchases
 		tradingBotState.Active = false
@@ -91,6 +98,8 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 	if action != Wait {
 		marketOrder.Price = closePrice
 		tradingBotState.MarketOrders = append(tradingBotState.MarketOrders, marketOrder)
+	} else if UseTestData {
+		fmt.Println("wait")
 	}
 }
 

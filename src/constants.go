@@ -1,9 +1,17 @@
 package main
 
+var UseTestData = false
+
 var BotParameters = Parameters{
 	ChangeThresholdPercentage: 0.0035,
 	LossSellPercentage:        0.015,
 	GainSellPercentage:        0.0015,
+}
+
+var BotParametersTest = Parameters{
+	ChangeThresholdPercentage: 0.003,
+	LossSellPercentage:        0.002,
+	GainSellPercentage:        0.002,
 }
 
 const (
