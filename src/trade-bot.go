@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"time"
 )
 
 func processStreamData(streamData []StreamEmission, symbol string) {
@@ -13,6 +14,7 @@ func processStreamData(streamData []StreamEmission, symbol string) {
 		PurchasePrice:         0,
 		MaxPriceSincePurchase: 0,
 		MarketOrders:          []MarketOrder{},
+		Profit:                0,
 	}
 
 	// Iterate through the stream data and determine whether to
@@ -21,15 +23,7 @@ func processStreamData(streamData []StreamEmission, symbol string) {
 		actionDetermination(streamEmission, &tradingBotState, symbol)
 	}
 
-	//	Calculate profit
-	profit := 0.0
-	for index, marketOrder := range tradingBotState.MarketOrders {
-		if index != 0 && index%2 == 0 {
-		profit += marketOrder.Price - tradingBotState.MarketOrders[index - 1].Price
-		}
-	}
-	fmt.Println(profit)
-
+	fmt.Println(tradingBotState.Profit)
 }
 
 func actionDetermination(streamEmission StreamEmission, tradingBotState *BotState, symbol string) {
@@ -59,18 +53,18 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 
 		// Sell if the price has fallen too far below the purchase point
 		if priceFallLossTriggered {
-			fmt.Println("sell loss")
+			fmt.Printf("sell loss - %s\n", timeFormatted(streamEmission.CloseTime))
 			action = Sell
 		} else if priceHasRisenEnough && priceFallGainTriggered {
 			//	Sell if the price has risen enough from the purchase price and also fallen too far below the maximum price
-			fmt.Println("sell profit")
+			fmt.Printf("sell profit - %s\n", timeFormatted(streamEmission.CloseTime))
 			action = Sell
 		}
 	case false:
 		// PURCHASE LOGIC
 		// Purchase if the percent change has passed the defined threshold
 		if percentChange >= BotParameters.ChangeThresholdPercentage {
-			fmt.Println("purchase")
+			fmt.Printf("purchase - %s\n", timeFormatted(streamEmission.CloseTime))
 			action = Purchase
 		}
 	}
@@ -84,18 +78,24 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 		tradingBotState.PurchasePrice = closePrice
 		tradingBotState.MaxPriceSincePurchase = closePrice
 		tradingBotState.Active = true
+		tradingBotState.Profit = tradingBotState.Profit - closePrice
 	case Sell:
 		marketOrder.Action = Sell
 
-		// Reset trading bot state for future purchases
+		// Set trading bot state values for future purchases
 		tradingBotState.Active = false
+		tradingBotState.Profit = tradingBotState.Profit + closePrice
 	}
 
 	// If the action is not a Wait, fulfill the market order
 	if action != Wait {
 		marketOrder.Price = closePrice
 		tradingBotState.MarketOrders = append(tradingBotState.MarketOrders, marketOrder)
-	} else {
-		fmt.Println("wait")
 	}
+}
+
+func timeFormatted(timestamp int64) time.Time {
+	// Shave off the last 3 digits from the timestamp for the Unix() function to work properly
+	tm := time.Unix(timestamp/1e3, 0)
+	return tm
 }

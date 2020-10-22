@@ -1,13 +1,13 @@
 package main
 
 type StreamEmission struct {
-	OpenTime                 uint
+	OpenTime                 int64
 	Open                     string
 	High                     string
 	Low                      string
 	Close                    string
 	Volume                   string
-	CloseTime                uint
+	CloseTime                int64
 	QuoteAssetVolume         string
 	NumberOfTrades           uint
 	TakerBuyBaseAssetVolume  string
@@ -21,7 +21,7 @@ type MarketOrder struct {
 	Action MarketOrderAction
 	Symbol string
 	Price  float64
-	Time   uint
+	Time   int64
 }
 
 type BotState struct {
@@ -29,6 +29,7 @@ type BotState struct {
 	PurchasePrice         float64
 	MaxPriceSincePurchase float64
 	MarketOrders          []MarketOrder
+	Profit                float64
 }
 
 type Parameters struct {

@@ -9,6 +9,9 @@ import (
 )
 
 func main() {
+
+
+
 	//	Read stream data for each symbol
 	for _, symbol := range Symbols {
 		// Dynamically create a file path
