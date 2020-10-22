@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func generateStreamEmissions(symbol string, c chan []StreamEmission) {
+func generateStreamEmissions(c chan []StreamEmission, symbol string) {
 	// Fetch coin data from the Binance API
 	url := fmt.Sprintf("https://api.binance.com/api/v3/klines?interval=3m&symbol=%sUSDT&limit=1000", symbol)
 	resp, apiErr := http.Get(url)
@@ -68,5 +68,6 @@ func generateStreamEmissions(symbol string, c chan []StreamEmission) {
 		}
 	}
 
+	// Send the generated stream emissions over the channel
 	c <- streamEmissionsConverted
 }

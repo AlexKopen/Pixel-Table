@@ -10,7 +10,7 @@ var BotParameters = Parameters{
 
 var BotParametersTest = Parameters{
 	ChangeThresholdPercentage: 0.003,
-	LossSellPercentage:        0.002,
+	LossSellPercentage:        0.02,
 	GainSellPercentage:        0.002,
 }
 

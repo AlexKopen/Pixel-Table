@@ -23,6 +23,7 @@ func processStreamData(streamData []StreamEmission, symbol string, c chan float6
 		actionDetermination(streamEmission, &tradingBotState, symbol)
 	}
 
+	// Output the final profit
 	c <- tradingBotState.Profit
 }
 
