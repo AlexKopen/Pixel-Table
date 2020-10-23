@@ -56,8 +56,8 @@ func readFileIfModified(lastMod time.Time) ([]byte, time.Time, error) {
 func reader(ws *websocket.Conn) {
 	defer ws.Close()
 	ws.SetReadLimit(512)
-	ws.SetReadDeadline(time.Now().Add(pongWait))
-	ws.SetPongHandler(func(string) error { ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	_ = ws.SetReadDeadline(time.Now().Add(pongWait))
+	ws.SetPongHandler(func(string) error { _ = ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
 		_, _, err := ws.ReadMessage()
 		if err != nil {
@@ -93,13 +93,13 @@ func writer(ws *websocket.Conn, lastMod time.Time) {
 			}
 
 			if p != nil {
-				ws.SetWriteDeadline(time.Now().Add(writeWait))
+				_ = ws.SetWriteDeadline(time.Now().Add(writeWait))
 				if err := ws.WriteMessage(websocket.TextMessage, p); err != nil {
 					return
 				}
 			}
 		case <-pingTicker.C:
-			ws.SetWriteDeadline(time.Now().Add(writeWait))
+			_ = ws.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 				return
 			}
@@ -149,7 +149,7 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 		string(p),
 		strconv.FormatInt(lastMod.UnixNano(), 16),
 	}
-	homeTempl.Execute(w, &v)
+	_ = homeTempl.Execute(w, &v)
 }
 
 func main() {
@@ -160,6 +160,12 @@ func main() {
 	filename = flag.Args()[0]
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", serveWs)
+
+	// Serve static files
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	log.Println("Listening for changes...")
 	if err := http.ListenAndServe(*addr, nil); err != nil {
 		log.Fatal(err)
 	}
@@ -171,6 +177,7 @@ const homeHTML = `<!DOCTYPE html>
         <title>WebSocket Example</title>
     </head>
     <body>
+		<img src="static/alex.png">
         <pre id="fileData">{{.Data}}</pre>
         <script type="text/javascript">
             (function() {
