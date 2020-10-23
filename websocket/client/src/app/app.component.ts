@@ -9,7 +9,7 @@ export class AppComponent implements OnInit{
   title = 'pixel-table-client';
 
   ngOnInit() {
-    const conn = new WebSocket("ws://localhost:8080/ws?lastMod=16408325606d65e9");
+    const conn = new WebSocket("ws://localhost:8080/ws");
     conn.onclose = function(evt) {
       console.log('Connection closed')
     }

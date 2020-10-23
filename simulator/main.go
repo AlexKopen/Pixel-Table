@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"sync"
 )
@@ -8,6 +10,7 @@ import (
 // :)
 var wg sync.WaitGroup
 var totalProfit float64
+var allBotStates []BotState
 
 func main() {
 	// Hide date in logs
@@ -24,8 +27,10 @@ func main() {
 	// Wait for all symbols to process
 	wg.Wait()
 
-	//	Output the total profit
+	//	Output the final stats
 	log.Printf("Total profit: %f\n", totalProfit)
+	file, _ := json.Marshal(allBotStates)
+	_ = ioutil.WriteFile("output.json", file, 0644)
 }
 
 func receiveStreamGenerationOutput(c chan []StreamEmission, symbol string) {
@@ -44,4 +49,5 @@ func receiveProcessStreamDataOutput(c chan BotState) {
 	// Stats
 	totalProfit += botState.Profit
 	log.Printf("Profit - %f: %s\n", botState.Profit, botState.Symbol)
+	allBotStates = append(allBotStates, botState)
 }
