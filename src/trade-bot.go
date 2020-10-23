@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"math"
 	"strconv"
 	"time"
@@ -34,13 +33,6 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 		Symbol: symbol,
 		Time:   streamEmission.CloseTime,
 	}
-	// Test data parameters detection
-	botParameters := BotParameters
-	if UseTestData {
-		botParameters = BotParametersTest
-	} else {
-		botParameters = BotParameters
-	}
 
 	// Convert the open and close price to floats
 	openPrice, _ := strconv.ParseFloat(streamEmission.Open, 32)
@@ -55,9 +47,9 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 		// SELL LOGIC
 		// Update trading bot state values
 		tradingBotState.MaxPriceSincePurchase = math.Max(tradingBotState.MaxPriceSincePurchase, closePrice)
-		priceFallLossTriggered := closePrice <= (tradingBotState.PurchasePrice - (tradingBotState.PurchasePrice * botParameters.LossSellPercentage))
-		priceHasRisenEnough := closePrice >= (tradingBotState.PurchasePrice + (tradingBotState.PurchasePrice * botParameters.GainSellPercentage))
-		priceFallGainTriggered := closePrice <= tradingBotState.MaxPriceSincePurchase-(tradingBotState.MaxPriceSincePurchase*botParameters.GainSellPercentage)
+		priceFallLossTriggered := closePrice <= (tradingBotState.PurchasePrice - (tradingBotState.PurchasePrice * BotParameters.LossSellPercentage))
+		priceHasRisenEnough := closePrice >= (tradingBotState.PurchasePrice + (tradingBotState.PurchasePrice * BotParameters.GainSellPercentage))
+		priceFallGainTriggered := closePrice <= tradingBotState.MaxPriceSincePurchase-(tradingBotState.MaxPriceSincePurchase*BotParameters.GainSellPercentage)
 
 		// Sell if the price has fallen too far below the purchase point
 		if priceFallLossTriggered {
@@ -71,7 +63,7 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 	case false:
 		// PURCHASE LOGIC
 		// Purchase if the percent change has passed the defined threshold
-		if percentChange >= botParameters.ChangeThresholdPercentage {
+		if percentChange >= BotParameters.ChangeThresholdPercentage {
 			//log.Printf("purchase - %s\n", timeFormatted(streamEmission.CloseTime))
 			action = Purchase
 		}
@@ -99,8 +91,6 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 	if action != Wait {
 		marketOrder.Price = closePrice
 		tradingBotState.MarketOrders = append(tradingBotState.MarketOrders, marketOrder)
-	} else if UseTestData {
-		log.Println("wait")
 	}
 }
 

@@ -9,21 +9,16 @@ import (
 var wg sync.WaitGroup
 
 func main() {
-	// Wait group for concurrency
-	if UseTestData {
-		//processStreamData(TestStreams, "UNI")
-	} else {
-		//	Read stream data for each symbol
-		for _, symbol := range Symbols {
-			// Process newly acquired stream emissions
-			streamGenerationChannel := make(chan []StreamEmission)
-			wg.Add(1)
-			go generateStreamEmissions(streamGenerationChannel, symbol)
-			go receiveStreamGenerationOutput(streamGenerationChannel, symbol)
-		}
-
-		wg.Wait()
+	//	Read stream data for each symbol
+	for _, symbol := range Symbols {
+		// Process newly acquired stream emissions
+		streamGenerationChannel := make(chan []StreamEmission)
+		wg.Add(1)
+		go generateStreamEmissions(streamGenerationChannel, symbol)
+		go receiveStreamGenerationOutput(streamGenerationChannel, symbol)
 	}
+
+	wg.Wait()
 }
 
 func receiveStreamGenerationOutput(c chan []StreamEmission, symbol string) {
