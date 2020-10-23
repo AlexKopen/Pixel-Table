@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func processStreamData(streamData []StreamEmission, symbol string, c chan float64) {
+func processStreamData(c chan BotState, streamData []StreamEmission, symbol string) {
 	// Create the initial trading bot state
 	tradingBotState := BotState{
 		Active:                false,
@@ -24,7 +24,7 @@ func processStreamData(streamData []StreamEmission, symbol string, c chan float6
 	}
 
 	// Output the final profit
-	c <- tradingBotState.Profit
+	c <- tradingBotState
 }
 
 func actionDetermination(streamEmission StreamEmission, tradingBotState *BotState, symbol string) {

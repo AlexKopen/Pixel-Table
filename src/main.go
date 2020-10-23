@@ -29,15 +29,16 @@ func main() {
 func receiveStreamGenerationOutput(c chan []StreamEmission, symbol string) {
 	// After receiving the generated streams, send them off for processing
 	streams := <-c
-	processStreamChannel := make(chan float64)
-	log.Printf("Streams fetched: %s\n", symbol)
-	go processStreamData(streams, symbol, processStreamChannel)
+	processStreamChannel := make(chan BotState)
+	//log.Printf("Streams fetched: %s\n", symbol)
+	go processStreamData(processStreamChannel, streams, symbol)
 	go receiveProcessStreamDataOutput(processStreamChannel, symbol)
 }
 
-func receiveProcessStreamDataOutput(c chan float64, symbol string) {
+func receiveProcessStreamDataOutput(c chan BotState, symbol string) {
 	// After processing the streams, mark the execution as complete
-	profit := <-c
-	log.Printf("Profit - %f: %s\n", profit, symbol)
+	botState := <-c
+	//log.Printf("Bot State - %+v: \n", botState)
+	log.Printf("Profit - %f: %s\n", botState.Profit, symbol)
 	wg.Done()
 }
