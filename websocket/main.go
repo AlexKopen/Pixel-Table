@@ -161,10 +161,6 @@ func main() {
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", serveWs)
 
-	// Serve static files
-	fs := http.FileServer(http.Dir("./static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
-
 	log.Println("Listening for changes...")
 	if err := http.ListenAndServe(*addr, nil); err != nil {
 		log.Fatal(err)
@@ -177,10 +173,10 @@ const homeHTML = `<!DOCTYPE html>
         <title>WebSocket Example</title>
     </head>
     <body>
-		<img src="static/alex.png">
         <pre id="fileData">{{.Data}}</pre>
         <script type="text/javascript">
             (function() {
+				window.location.href = "localhost:4200"
                 var data = document.getElementById("fileData");
                 var conn = new WebSocket("ws://{{.Host}}/ws?lastMod={{.LastMod}}");
                 conn.onclose = function(evt) {
