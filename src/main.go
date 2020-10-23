@@ -10,6 +10,7 @@ var wg sync.WaitGroup
 var totalProfit float64
 
 func main() {
+	log.SetFlags(0)
 	//	Read stream data for each symbol
 	for _, symbol := range Symbols {
 		// Process newly acquired stream emissions

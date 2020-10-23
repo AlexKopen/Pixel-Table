@@ -1,8 +1,10 @@
 package main
 
 import (
+	"log"
 	"math"
 	"strconv"
+	"time"
 )
 
 func processStreamData(c chan BotState, streamData []StreamEmission, symbol string) {
@@ -60,15 +62,18 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 
 		// Sell if the price has fallen too far below the purchase point
 		if priceFallLossTriggered {
+			logTrade("sell loss", streamEmission.CloseTime)
 			action = Sell
 		} else if priceHasRisenEnough && priceFallGainTriggered {
 			//	Sell if the price has risen enough from the purchase price and also fallen too far below the maximum price
+			logTrade("sell profit", streamEmission.CloseTime)
 			action = Sell
 		}
 	case false:
 		// PURCHASE LOGIC
 		// Purchase if the percent change has passed the defined threshold
 		if percentChange >= BotParameters.ChangeThresholdPercentage {
+			logTrade("purchase", streamEmission.CloseTime)
 			action = Purchase
 		}
 	}
@@ -97,4 +102,16 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 		marketOrder.Price = closePrice
 		tradingBotState.MarketOrders = append(tradingBotState.MarketOrders, marketOrder)
 	}
+}
+
+func logTrade(message string, closeTime int64) {
+	if true {
+		log.Printf("%s - %s\n", message, timeFormatted(closeTime))
+	}
+}
+
+func timeFormatted(timestamp int64) time.Time {
+	// Shave off the last 3 digits from the timestamp for the Unix() function to work properly
+	tm := time.Unix(timestamp/1e3, 0)
+	return tm
 }
