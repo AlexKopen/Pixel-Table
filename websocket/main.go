@@ -32,9 +32,13 @@ var (
 	addr      = flag.String("addr", ":8080", "http service address")
 	homeTempl = template.Must(template.New("").Parse(homeHTML))
 	filename  string
+	// Allow cross origin
 	upgrader  = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
 	}
 )
 
@@ -176,7 +180,6 @@ const homeHTML = `<!DOCTYPE html>
         <pre id="fileData">{{.Data}}</pre>
         <script type="text/javascript">
             (function() {
-				window.location.href = "localhost:4200"
                 var data = document.getElementById("fileData");
                 var conn = new WebSocket("ws://{{.Host}}/ws?lastMod={{.LastMod}}");
                 conn.onclose = function(evt) {
