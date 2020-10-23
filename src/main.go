@@ -7,6 +7,7 @@ import (
 
 // :)
 var wg sync.WaitGroup
+var totalProfit float64
 
 func main() {
 	//	Read stream data for each symbol
@@ -18,22 +19,27 @@ func main() {
 		go receiveStreamGenerationOutput(streamGenerationChannel, symbol)
 	}
 
+	// Wait for all symbols to process
 	wg.Wait()
+
+	//	Output the total profit
+	log.Printf("Total profit: %f\n", totalProfit)
 }
 
 func receiveStreamGenerationOutput(c chan []StreamEmission, symbol string) {
 	// After receiving the generated streams, send them off for processing
 	streams := <-c
 	processStreamChannel := make(chan BotState)
-	//log.Printf("Streams fetched: %s\n", symbol)
 	go processStreamData(processStreamChannel, streams, symbol)
-	go receiveProcessStreamDataOutput(processStreamChannel, symbol)
+	go receiveProcessStreamDataOutput(processStreamChannel)
 }
 
-func receiveProcessStreamDataOutput(c chan BotState, symbol string) {
+func receiveProcessStreamDataOutput(c chan BotState) {
 	// After processing the streams, mark the execution as complete
+	defer wg.Done()
 	botState := <-c
-	//log.Printf("Bot State - %+v: \n", botState)
-	log.Printf("Profit - %f: %s\n", botState.Profit, symbol)
-	wg.Done()
+
+	// Stats
+	totalProfit += botState.Profit
+	log.Printf("Profit - %f: %s\n", botState.Profit, botState.Symbol)
 }

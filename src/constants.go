@@ -1,6 +1,7 @@
 package main
 
 var BotParameters = Parameters{
+	OrderSize: 100.00,
 	ChangeThresholdPercentage: 0.0035,
 	LossSellPercentage:        0.015,
 	GainSellPercentage:        0.0015,
