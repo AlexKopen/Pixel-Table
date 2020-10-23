@@ -8,9 +8,9 @@ import (
 	"net/http"
 )
 
-func generateStreamEmissions(c chan []StreamEmission, symbol string) {
+func generateStreamEmissions(c chan []StreamEmission, symbol string, endTime int64) {
 	// Fetch coin data from the Binance API
-	url := fmt.Sprintf("https://api.binance.com/api/v3/klines?interval=3m&symbol=%sUSDT&limit=1000%s", symbol, "&endTime=1603417344657")
+	url := fmt.Sprintf("https://api.binance.com/api/v3/klines?interval=3m&symbol=%sUSDT&limit=1000&endTime=%d", symbol, endTime)
 	resp, apiErr := http.Get(url)
 	if apiErr != nil {
 		log.Println("API error: ", apiErr)

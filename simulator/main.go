@@ -10,13 +10,14 @@ var wg sync.WaitGroup
 var totalProfit float64
 
 func main() {
+	// Hide date in logs
 	log.SetFlags(0)
 	//	Read stream data for each symbol
 	for _, symbol := range Symbols {
 		// Process newly acquired stream emissions
 		streamGenerationChannel := make(chan []StreamEmission)
 		wg.Add(1)
-		go generateStreamEmissions(streamGenerationChannel, symbol)
+		go generateStreamEmissions(streamGenerationChannel, symbol, 1603417344657)
 		go receiveStreamGenerationOutput(streamGenerationChannel, symbol)
 	}
 
