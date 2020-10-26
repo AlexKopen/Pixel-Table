@@ -4,21 +4,23 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	models "pixel-table/simulator/shared"
 	"sync"
 )
 
 // :)
 var wg sync.WaitGroup
 var totalProfit float64
-var allBotStates []BotState
+var allBotStates []models.BotState
 
 func main() {
 	// Hide date in logs
 	log.SetFlags(0)
+
 	//	Read stream data for each symbol
 	for _, symbol := range Symbols {
 		// Process newly acquired stream emissions
-		streamGenerationChannel := make(chan []StreamEmission)
+		streamGenerationChannel := make(chan []models.StreamEmission)
 		wg.Add(1)
 		go generateStreamEmissions(streamGenerationChannel, symbol, 1603417344657)
 		go receiveStreamGenerationOutput(streamGenerationChannel, symbol)
@@ -33,15 +35,15 @@ func main() {
 	_ = ioutil.WriteFile("output.json", file, 0644)
 }
 
-func receiveStreamGenerationOutput(c chan []StreamEmission, symbol string) {
+func receiveStreamGenerationOutput(c chan []models.StreamEmission, symbol string) {
 	// After receiving the generated streams, send them off for processing
 	streams := <-c
-	processStreamChannel := make(chan BotState)
+	processStreamChannel := make(chan models.BotState)
 	go processStreamData(processStreamChannel, streams, symbol)
 	go receiveProcessStreamDataOutput(processStreamChannel)
 }
 
-func receiveProcessStreamDataOutput(c chan BotState) {
+func receiveProcessStreamDataOutput(c chan models.BotState) {
 	// After processing the streams, mark the execution as complete
 	defer wg.Done()
 	botState := <-c

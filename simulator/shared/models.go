@@ -1,4 +1,4 @@
-package main
+package models
 
 type StreamEmission struct {
 	OpenTime                 int64
@@ -32,6 +32,7 @@ type BotState struct {
 	MarketOrders          []MarketOrder
 	ActiveAmount          float64
 	Profit                float64
+	PercentChange         float64
 }
 
 type Parameters struct {

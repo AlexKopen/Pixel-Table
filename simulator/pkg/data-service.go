@@ -6,9 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	models "pixel-table/simulator/shared"
 )
 
-func generateStreamEmissions(c chan []StreamEmission, symbol string, endTime int64) {
+func generateStreamEmissions(c chan []models.StreamEmission, symbol string, endTime int64) {
 	// Fetch coin data from the Binance API
 	url := fmt.Sprintf("https://api.binance.com/api/v3/klines?interval=3m&symbol=%sUSDT&limit=1000&endTime=%d", symbol, endTime)
 	resp, apiErr := http.Get(url)
@@ -19,7 +20,7 @@ func generateStreamEmissions(c chan []StreamEmission, symbol string, endTime int
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	// Unmarshal the data using a custom interface
-	var emissionRef StreamEmission
+	var emissionRef models.StreamEmission
 	streamEmissions := []interface{}{emissionRef.OpenTime, emissionRef.Open, emissionRef.High, emissionRef.Low, emissionRef.Close, emissionRef.Volume, emissionRef.CloseTime, emissionRef.QuoteAssetVolume, emissionRef.NumberOfTrades, emissionRef.TakerBuyBaseAssetVolume, emissionRef.TakerBuyQuoteAssetVolume, emissionRef.Ignore}
 
 	if unmarshalErr := json.Unmarshal(body, &streamEmissions); unmarshalErr != nil {
@@ -27,11 +28,11 @@ func generateStreamEmissions(c chan []StreamEmission, symbol string, endTime int
 	}
 
 	// Iterate through the stream emissions with a custom interface and map over to a usable struct
-	var streamEmissionsConverted []StreamEmission
+	var streamEmissionsConverted []models.StreamEmission
 
 	for _, record := range streamEmissions {
 		if rec, ok := record.([]interface{}); ok {
-			tempStreamEmission := StreamEmission{}
+			tempStreamEmission := models.StreamEmission{}
 			for key, val := range rec {
 				switch key {
 				case 0:

@@ -1,3 +1,6 @@
 .idea
 websocket/client/node_modules
 websocket/client/.idea
+simulator/plugins/trade-bot/secret
+simulator/plugins/trade-bot/trade-bot.so
+output.json

@@ -1,21 +1,24 @@
 package main
 
 import (
-	"math"
+	"path/filepath"
+	models "pixel-table/simulator/shared"
+	"plugin"
 	"strconv"
 )
 
-func processStreamData(c chan BotState, streamData []StreamEmission, symbol string) {
+func processStreamData(c chan models.BotState, streamData []models.StreamEmission, symbol string) {
 	// Create the initial trading bot state
-	tradingBotState := BotState{
+	tradingBotState := models.BotState{
 		Symbol:                symbol,
 		CurrentPrice:          0,
 		Active:                false,
 		PurchasePrice:         0,
 		MaxPriceSincePurchase: 0,
-		MarketOrders:          []MarketOrder{},
+		MarketOrders:          []models.MarketOrder{},
 		ActiveAmount:          0,
 		Profit:                0,
+		PercentChange:         0,
 	}
 
 	// Iterate through the stream data and determine whether to
@@ -34,44 +37,20 @@ func processStreamData(c chan BotState, streamData []StreamEmission, symbol stri
 	c <- tradingBotState
 }
 
-func actionDetermination(streamEmission StreamEmission, tradingBotState *BotState) {
+func actionDetermination(streamEmission models.StreamEmission, tradingBotState *models.BotState) {
 	// Set default action and order values
 	action := Wait
-	marketOrder := MarketOrder{
+	marketOrder := models.MarketOrder{
 		Time: streamEmission.CloseTime,
 	}
 
 	// Convert the open and close price to floats
 	openPrice, _ := strconv.ParseFloat(streamEmission.Open, 32)
 	closePrice, _ := strconv.ParseFloat(streamEmission.Close, 32)
+	tradingBotState.PercentChange = (closePrice - openPrice) / openPrice
 
-	// Calculate the percent change
-	percentChange := (closePrice - openPrice) / openPrice
-
-	// Consider selling if the trade is active, otherwise consider a purchase
-	switch tradingBotState.Active {
-	case true:
-		// SELL LOGIC
-		// Update trading bot state values
-		tradingBotState.MaxPriceSincePurchase = math.Max(tradingBotState.MaxPriceSincePurchase, closePrice)
-		priceFallLossTriggered := closePrice <= (tradingBotState.PurchasePrice - (tradingBotState.PurchasePrice * BotParameters.LossSellPercentage))
-		priceHasRisenEnough := closePrice >= (tradingBotState.PurchasePrice + (tradingBotState.PurchasePrice * BotParameters.GainSellPercentage))
-		priceFallGainTriggered := closePrice <= tradingBotState.MaxPriceSincePurchase-(tradingBotState.MaxPriceSincePurchase*BotParameters.GainSellPercentage)
-
-		// Sell if the price has fallen too far below the purchase point
-		if priceFallLossTriggered {
-			action = Sell
-		} else if priceHasRisenEnough && priceFallGainTriggered {
-			//	Sell if the price has risen enough from the purchase price and also fallen too far below the maximum price
-			action = Sell
-		}
-	case false:
-		// PURCHASE LOGIC
-		// Purchase if the percent change has passed the defined threshold
-		if percentChange >= BotParameters.ChangeThresholdPercentage {
-			action = Purchase
-		}
-	}
+	// PLUGIN
+	action = determineTradeAction(tradingBotState)
 
 	// Create a market order if a purchase or sell action is set
 	switch action {
@@ -97,4 +76,29 @@ func actionDetermination(streamEmission StreamEmission, tradingBotState *BotStat
 		marketOrder.Price = closePrice
 		tradingBotState.MarketOrders = append(tradingBotState.MarketOrders, marketOrder)
 	}
+}
+
+func determineTradeAction(tradingBotState *models.BotState) models.MarketOrderAction {
+	// Glob – Gets the plugin to be loaded
+	plugins, err := filepath.Glob("simulator/plugins/trade-bot/trade-bot.so")
+	if err != nil {
+		panic(err)
+	}
+	// Open – Loads the plugin
+	p, loadErr := plugin.Open(plugins[0])
+	if loadErr != nil {
+		panic(loadErr)
+	}
+	// Lookup – Searches for a symbol name in the plugin
+	symbol, lookupErr := p.Lookup("ProcessTrade")
+	if lookupErr != nil {
+		panic(lookupErr)
+	}
+	// symbol – Checks the function signature
+	processFunc, ok := symbol.(func(*models.BotState) models.MarketOrderAction)
+	if !ok {
+		panic("Plugin has no 'ProcessTrade' function")
+	}
+	// Uses the function to return results
+	return processFunc(tradingBotState)
 }

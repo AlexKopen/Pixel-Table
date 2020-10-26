@@ -14,7 +14,7 @@ export class AppComponent implements OnInit{
       console.log('Connection closed')
     }
     conn.onmessage = function(evt) {
-      console.log('file updated');
+      console.log('asdfasdfasdf');
       console.log(evt.data)
     }
   }
