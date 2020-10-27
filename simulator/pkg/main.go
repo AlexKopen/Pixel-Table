@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	models "pixel-table/simulator/shared"
+	models "pixel-table/simulator/models"
 	"sync"
 )
 
@@ -49,7 +49,6 @@ func receiveProcessStreamDataOutput(c chan models.BotState) {
 	botState := <-c
 
 	// Stats
-	totalProfit += botState.Profit
-	log.Printf("Profit - %f: %s\n", botState.Profit, botState.Symbol)
+	log.Printf("%s complete\n", botState.Symbol)
 	allBotStates = append(allBotStates, botState)
 }

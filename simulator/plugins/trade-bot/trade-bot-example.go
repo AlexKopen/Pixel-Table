@@ -1,19 +1,26 @@
 package main
 
 import (
-	models "pixel-table/simulator/shared"
+	"pixel-table/simulator/models"
+	"strconv"
 )
 
-func ProcessTrade(tradingBotState *models.BotState) models.MarketOrderAction {
+func ProcessTrade(tradingBotState models.BotState, streamEmission models.StreamEmission) models.MarketOrderAction {
+	// Convert the open and close price to floats
+	openPrice, _ := strconv.ParseFloat(streamEmission.Open, 32)
+	closePrice, _ := strconv.ParseFloat(streamEmission.Close, 32)
+	percentChange := (closePrice - openPrice) / openPrice
+
 	// Wait by default
 	var action = 2
-	if tradingBotState.Active && tradingBotState.PercentChange > 0.01 {
-		// Sell
+
+	// Sell
+	if tradingBotState.Active && percentChange > 0.01 {
 		action = 1
 	}
 
-	if !tradingBotState.Active && tradingBotState.PercentChange > 0.01 {
-		// Purchase
+	// Purchase
+	if !tradingBotState.Active && percentChange > 0.01 {
 		action = 0
 	}
 

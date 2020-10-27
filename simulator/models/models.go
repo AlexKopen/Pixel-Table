@@ -25,19 +25,10 @@ type MarketOrder struct {
 
 type BotState struct {
 	Symbol                string
-	CurrentPrice          float64
 	Active                bool
-	PurchasePrice         float64
-	MaxPriceSincePurchase float64
 	MarketOrders          []MarketOrder
-	ActiveAmount          float64
-	Profit                float64
-	PercentChange         float64
 }
 
 type Parameters struct {
 	OrderSize                 float64
-	ChangeThresholdPercentage float64
-	LossSellPercentage        float64
-	GainSellPercentage        float64
 }
