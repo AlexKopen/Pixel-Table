@@ -4,21 +4,45 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	models "pixel-table/simulator/models"
+	"net/http"
+	"pixel-table/simulator/models"
 	"sync"
 )
 
 // :)
 var wg sync.WaitGroup
-var totalProfit float64
 var allBotStates []models.BotState
 
-func main() {
-	// Hide date in logs
-	log.SetFlags(0)
+func main ()  {
+	// Listen for config update requests
+	http.HandleFunc("/", configUpdate)
+	log.Fatal(http.ListenAndServe(":10000", nil))
+}
 
+func configUpdate(w http.ResponseWriter, r *http.Request){
+	// If a POST request is received, run the simulation with the passed in configuration
+	if r.Method == "POST" {
+		reqBody, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var configuration models.EngineConfiguration
+		configErr := json.Unmarshal(reqBody, &configuration)
+
+		if configErr != nil {
+			log.Println("Config parse error")
+		} else {
+			runSimulation(configuration)
+		}
+	}
+}
+
+func runSimulation(configuration models.EngineConfiguration) {
+	// Clear bot states
+	allBotStates = nil
 	//	Read stream data for each symbol
-	for _, symbol := range Symbols {
+	for _, symbol := range configuration.Symbols {
 		// Process newly acquired stream emissions
 		streamGenerationChannel := make(chan []models.StreamEmission)
 		wg.Add(1)
@@ -30,7 +54,6 @@ func main() {
 	wg.Wait()
 
 	//	Output the final stats
-	log.Printf("Total profit: %f\n", totalProfit)
 	file, _ := json.Marshal(allBotStates)
 	_ = ioutil.WriteFile("output.json", file, 0644)
 }

@@ -24,11 +24,16 @@ type MarketOrder struct {
 }
 
 type BotState struct {
-	Symbol                string
-	Active                bool
-	MarketOrders          []MarketOrder
+	Symbol       string
+	Active       bool
+	MarketOrders []MarketOrder
 }
 
 type Parameters struct {
-	OrderSize                 float64
+	OrderSize float64
+}
+
+type EngineConfiguration struct {
+	Symbols           []string
+	StartingTimeStamp int64
 }
