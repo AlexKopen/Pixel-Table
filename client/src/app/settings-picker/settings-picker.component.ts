@@ -12,6 +12,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 })
 export class SettingsPickerComponent implements OnInit {
   symbolSelections: SymbolSelection[] = [];
+  dateSelection: Date = new Date();
   displayedColumns: string[] = ['select', 'symbol'];
   dataSource = new MatTableDataSource<SymbolSelection>(this.symbolSelections);
   selection = new SelectionModel<SymbolSelection>(true, []);
@@ -33,9 +34,11 @@ export class SettingsPickerComponent implements OnInit {
       }
     );
 
-    this.dataService.sendConfig(symbols).subscribe(() => {
-      console.log('config sent');
-    });
+    this.dataService
+      .sendConfig(this.dateSelection.getTime(), symbols)
+      .subscribe(() => {
+        console.log('config sent');
+      });
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

@@ -9,8 +9,8 @@ import { EngineConfiguration } from '../models/engine-configuration.model';
 export class DataService {
   constructor(private http: HttpClient) {}
 
-  sendConfig(symbols: string[]): Observable<any> {
-    const config = new EngineConfiguration(symbols, new Date().getTime());
+  sendConfig(timestamp: number, symbols: string[]): Observable<any> {
+    const config = new EngineConfiguration(symbols, timestamp);
     return this.http.post('/api', config);
   }
 }
