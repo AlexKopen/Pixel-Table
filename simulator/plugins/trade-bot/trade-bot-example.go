@@ -15,12 +15,12 @@ func ProcessTrade(tradingBotState models.BotState, streamEmission models.StreamE
 	var action = 2
 
 	// Sell
-	if tradingBotState.Active && percentChange > 0.01 {
+	if tradingBotState.Active && percentChange > 0.005 {
 		action = 1
 	}
 
 	// Purchase
-	if !tradingBotState.Active && percentChange > 0.01 {
+	if !tradingBotState.Active && percentChange > 0.005 {
 		action = 0
 	}
 

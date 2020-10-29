@@ -11,7 +11,7 @@ import (
 
 func generateStreamEmissions(c chan []models.StreamEmission, symbol string, endTime int64) {
 	// Fetch coin data from the Binance API
-	url := fmt.Sprintf("https://api.binance.com/api/v3/klines?interval=3m&symbol=%sUSDT&limit=1000&endTime=%d", symbol, endTime)
+	url := fmt.Sprintf("https://api.binance.com/api/v3/klines?interval=5m&symbol=%sUSDT&limit=1000&endTime=%d", symbol, endTime)
 	resp, apiErr := http.Get(url)
 	if apiErr != nil {
 		log.Println("API error: ", apiErr)
