@@ -1,5 +1,5 @@
 export class EngineConfiguration {
-  Symbols: string[]
+  Symbols: string[];
   StartingTimeStamp: number;
 
   constructor(Symbols: string[], StartingTimeStamp: number) {

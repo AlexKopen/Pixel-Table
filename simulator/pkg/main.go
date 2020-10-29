@@ -13,13 +13,13 @@ import (
 var wg sync.WaitGroup
 var allBotStates []models.BotState
 
-func main ()  {
+func main() {
 	// Listen for config update requests
 	http.HandleFunc("/", configUpdate)
 	log.Fatal(http.ListenAndServe(":10000", nil))
 }
 
-func configUpdate(w http.ResponseWriter, r *http.Request){
+func configUpdate(w http.ResponseWriter, r *http.Request) {
 	// If a POST request is received, run the simulation with the passed in configuration
 	if r.Method == "POST" {
 		reqBody, err := ioutil.ReadAll(r.Body)

@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	models "pixel-table/simulator/models"
+	"pixel-table/simulator/models"
 )
 
 func generateStreamEmissions(c chan []models.StreamEmission, symbol string, endTime int64) {

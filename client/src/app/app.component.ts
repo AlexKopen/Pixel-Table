@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BotState } from './models/bot-state.model';
-import {DataService} from "./services/data.service";
+import { DataService } from './services/data.service';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +10,7 @@ import {DataService} from "./services/data.service";
 export class AppComponent implements OnInit {
   botStates: BotState[];
 
-  constructor(private dataService: DataService) {
-  }
+  constructor(private dataService: DataService) {}
 
   ngOnInit() {
     const conn = new WebSocket('ws://localhost:8080/ws');
@@ -23,11 +22,5 @@ export class AppComponent implements OnInit {
     conn.onmessage = evt => {
       this.botStates = JSON.parse(evt.data);
     };
-  }
-
-  sendConfig(): void {
-    this.dataService.sendConfig().subscribe(() => {
-      console.log('config sent')
-    })
   }
 }

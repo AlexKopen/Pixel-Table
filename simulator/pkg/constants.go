@@ -3,7 +3,7 @@ package main
 import "pixel-table/simulator/models"
 
 var BotParameters = models.Parameters{
-	OrderSize:                 100.00,
+	OrderSize: 100.00,
 }
 
 const (
