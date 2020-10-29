@@ -11,18 +11,3 @@ const (
 	Sell
 	Wait
 )
-
-var Symbols = [...]string{
-	"LINK",
-	"ETH",
-	"DOT",
-	"BNB",
-	"EOS",
-	"ADA",
-	"BTC",
-	"TRX",
-	"XRP",
-	"XTZ",
-	"UNI",
-	"LTC",
-}
