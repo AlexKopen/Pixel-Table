@@ -14,9 +14,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { ResultsComponent } from './results/results.component';
 
 @NgModule({
-  declarations: [AppComponent, SettingsPickerComponent],
+  declarations: [AppComponent, SettingsPickerComponent, ResultsComponent],
   imports: [
     FormsModule,
     BrowserModule,

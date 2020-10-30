@@ -1,12 +1,12 @@
 package main
 
 import (
+	"Pixel-Table/simulator/models"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"pixel-table/simulator/models"
 )
 
 func generateStreamEmissions(c chan []models.StreamEmission, symbol string, endTime int64) {

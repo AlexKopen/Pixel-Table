@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"pixel-table/simulator/models"
+	"Pixel-Table/simulator/models"
 	"sync"
 )
 

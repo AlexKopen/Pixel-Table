@@ -1,6 +1,6 @@
 package main
 
-import "pixel-table/simulator/models"
+import "Pixel-Table/simulator/models"
 
 var BotParameters = models.Parameters{
 	OrderSize: 100.00,

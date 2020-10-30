@@ -1,7 +1,7 @@
 package main
 
 import (
-	"pixel-table/simulator/models"
+	"Pixel-Table/simulator/models"
 	"strconv"
 )
 

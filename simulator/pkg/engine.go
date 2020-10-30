@@ -2,7 +2,7 @@ package main
 
 import (
 	"path/filepath"
-	"pixel-table/simulator/models"
+	"Pixel-Table/simulator/models"
 	"plugin"
 	"strconv"
 )
