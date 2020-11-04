@@ -23,7 +23,7 @@ and then broadcast the results to the client application through a websocket.
 
 Navigate to the `/server` directory and start the websocket with `output.json` as the first argument.
 ```
-cd server && go run main.go output.json
+cd server && go run main.go ../output.json
 ```
 
 ### 3. Start the client
