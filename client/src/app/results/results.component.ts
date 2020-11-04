@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { BotState } from '../models/bot-state.model';
 import { SettingsService } from '../services/settings.service';
+import { MarketOrder } from '../models/market-order.model';
+import { OrderCycle } from '../models/order-cycle.model';
 
 @Component({
   selector: 'app-results',
@@ -10,7 +12,13 @@ import { SettingsService } from '../services/settings.service';
 })
 export class ResultsComponent implements OnInit {
   botStates: BotState[] = [];
-  displayedColumns: string[] = ['Action', 'Price', 'Time'];
+  displayedColumns: string[] = [
+    'Profit',
+    'Starting Price',
+    'Ending Price',
+    'Starting Time',
+    'Ending Time'
+  ];
   selectedSymbol = '';
 
   constructor(
@@ -44,5 +52,9 @@ export class ResultsComponent implements OnInit {
 
   get disableViewAll(): boolean {
     return this.selectedSymbol === '';
+  }
+
+  totalProfit(orderCycles: OrderCycle[]): number {
+    return this.dataService.totalProfit(orderCycles);
   }
 }
