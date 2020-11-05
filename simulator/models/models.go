@@ -24,6 +24,7 @@ type MarketOrder struct {
 }
 
 type BotState struct {
+	Id           float64
 	Symbol       string
 	Active       bool
 	MarketOrders []MarketOrder

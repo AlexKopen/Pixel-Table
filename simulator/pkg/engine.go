@@ -1,8 +1,9 @@
 package main
 
 import (
-	"path/filepath"
 	"Pixel-Table/simulator/models"
+	"math/rand"
+	"path/filepath"
 	"plugin"
 	"strconv"
 )
@@ -13,6 +14,7 @@ func processStreamData(c chan models.BotState, streamData []models.StreamEmissio
 		Symbol:       symbol,
 		Active:       false,
 		MarketOrders: []models.MarketOrder{},
+		Id:           rand.Float64(),
 	}
 
 	// Iterate through the stream data and determine whether to
