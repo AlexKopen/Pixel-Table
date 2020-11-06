@@ -7,17 +7,43 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sort"
+	"sync"
 )
 
-func generateStreamEmissions(c chan []models.StreamEmission, symbol string, endTime int64) {
+func generateStreamEmissions(c chan []models.StreamEmission, symbol string, startTime, endTime int64) {
+	// Create the wait group and stream emissions slice
+	var apiWg sync.WaitGroup
+	var streamEmissionsConverted []models.StreamEmission
+
+	// Call the Binance API for every 1000 minutes (the maximum limit permitted)
+	for currentTime := startTime; currentTime <= endTime; currentTime += 60000000 {
+		apiWg.Add(1)
+		go fetchHistoricalData(&apiWg, &streamEmissionsConverted, symbol, currentTime)
+	}
+
+	// Wait for all requests for finish
+	apiWg.Wait()
+
+	// Sort the streams
+	sort.Slice(streamEmissionsConverted, func(i, j int) bool {
+		return streamEmissionsConverted[i].CloseTime < streamEmissionsConverted[j].CloseTime
+	})
+
+	// Send the generated stream emissions over the channel
+	c <- streamEmissionsConverted
+}
+
+func fetchHistoricalData(apiWg *sync.WaitGroup, streamEmissionsConverted *[]models.StreamEmission, symbol string, startTime int64) {
 	// Fetch coin data from the Binance API
-	url := fmt.Sprintf("https://api.binance.com/api/v3/klines?interval=1m&symbol=%sUSDT&limit=1000&endTime=%d", symbol, endTime)
+	url := fmt.Sprintf("https://api.binance.com/api/v3/klines?interval=1m&symbol=%sUSDT&limit=1000&startTime=%d", symbol, startTime)
 	resp, apiErr := http.Get(url)
 	if apiErr != nil {
 		log.Println("API error: ", apiErr)
 	}
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
+
+	defer resp.Body.Close()
 
 	// Unmarshal the data using a custom interface
 	var emissionRef models.StreamEmission
@@ -28,8 +54,6 @@ func generateStreamEmissions(c chan []models.StreamEmission, symbol string, endT
 	}
 
 	// Iterate through the stream emissions with a custom interface and map over to a usable struct
-	var streamEmissionsConverted []models.StreamEmission
-
 	for _, record := range streamEmissions {
 		if rec, ok := record.([]interface{}); ok {
 			tempStreamEmission := models.StreamEmission{}
@@ -62,13 +86,13 @@ func generateStreamEmissions(c chan []models.StreamEmission, symbol string, endT
 				}
 			}
 
-			streamEmissionsConverted = append(streamEmissionsConverted, tempStreamEmission)
+			*streamEmissionsConverted = append(*streamEmissionsConverted, tempStreamEmission)
 
 		} else {
 			fmt.Printf("StreamEmission struct conversion error")
 		}
 	}
 
-	// Send the generated stream emissions over the channel
-	c <- streamEmissionsConverted
+	// After data fetch and conversion to stream emissions, mark the request as complete
+	apiWg.Done()
 }
