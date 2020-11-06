@@ -36,5 +36,6 @@ type Parameters struct {
 
 type EngineConfiguration struct {
 	Symbols         []string
+	StartingTimeStamp int64
 	EndingTimeStamp int64
 }

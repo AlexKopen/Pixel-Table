@@ -8,7 +8,7 @@ export const SYMBOLS: string[] = [
   'LINK',
   'LTC',
   'TRX',
-  // 'UNI',
+  'UNI',
   'XRP',
   'XTZ',
   'XMR'

@@ -46,7 +46,7 @@ func runSimulation(configuration models.EngineConfiguration) {
 		// Process newly acquired stream emissions
 		streamGenerationChannel := make(chan []models.StreamEmission)
 		wg.Add(1)
-		go generateStreamEmissions(streamGenerationChannel, symbol, 1599443718263, configuration.EndingTimeStamp)
+		go generateStreamEmissions(streamGenerationChannel, symbol, configuration.StartingTimeStamp, configuration.EndingTimeStamp)
 		go receiveStreamGenerationOutput(streamGenerationChannel, symbol)
 	}
 

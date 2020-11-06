@@ -13,8 +13,8 @@ export class DataService {
   botStates$: BehaviorSubject<BotState[]> = new BehaviorSubject<BotState[]>([]);
   constructor(private http: HttpClient) {}
 
-  sendConfig(timestamp: number, symbols: string[]): Observable<any> {
-    const config = new EngineConfiguration(symbols, timestamp);
+  sendConfig(symbols: string[], startTimestamp: number, endTimestamp: number): Observable<any> {
+    const config = new EngineConfiguration(symbols, startTimestamp, endTimestamp);
     return this.http.post('/api', config);
   }
 

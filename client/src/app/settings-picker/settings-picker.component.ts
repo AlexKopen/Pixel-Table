@@ -15,7 +15,8 @@ import { BotState } from '../models/bot-state.model';
 export class SettingsPickerComponent implements OnInit {
   botStates: BotState[] = [];
   symbolSelections: SymbolSelection[] = [];
-  dateSelection: Date = new Date();
+  dateStart: Date = new Date();
+  dateEnd: Date = new Date();
   displayedColumns: string[] = ['Select', 'Symbol', 'View', 'Profit'];
   dataSource = new MatTableDataSource<SymbolSelection>(this.symbolSelections);
   selection = new SelectionModel<SymbolSelection>(true, []);
@@ -45,7 +46,7 @@ export class SettingsPickerComponent implements OnInit {
     );
 
     this.dataService
-      .sendConfig(this.dateSelection.getTime(), symbols)
+      .sendConfig(symbols, this.dateStart.getTime(), this.dateEnd.getTime())
       .subscribe(() => {});
   }
 
