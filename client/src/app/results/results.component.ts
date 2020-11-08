@@ -57,4 +57,6 @@ export class ResultsComponent implements OnInit {
   totalProfit(orderCycles: OrderCycle[]): number {
     return this.dataService.totalProfit(orderCycles);
   }
+
+
 }
