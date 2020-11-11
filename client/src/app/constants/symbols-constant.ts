@@ -5,11 +5,13 @@ export const SYMBOLS: string[] = [
   'DOT',
   'EOS',
   'ETH',
+  'FIL',
   'LINK',
   'LTC',
+  'SXP',
   'TRX',
   'UNI',
   'XRP',
   'XTZ',
-  'XMR'
+  'YFI'
 ];
