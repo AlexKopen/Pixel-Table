@@ -43,4 +43,4 @@ Navigate to `/simulator/pkg` and run `main.go`.
 cd simulator && go run main.go
 ```
 
-The engine will process all USDT trading pairs for each coin defined in `/simulator/pkg/constants.go` for the past 24 hours.
+The engine will process all USDT trading pairs for each coin defined in `/simulator/pkg/constants.go` for the selected date range.
